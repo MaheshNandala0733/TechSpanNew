@@ -1,105 +1,151 @@
-import logo from './logo.svg';
-import './App.css';
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch} from 'react-redux';
-import {getSpaceData} from './redux/spaceInfo';
-import { getInfo } from './redux/spaceInfo'
+import "./App.css";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getInfo } from "./redux/spaceInfo"
 
 function App() {
-  useEffect(()=> {
+  useEffect(() => {
     dispatch(getInfo());
-  },[])
-  const [rocketName, setrocketName] = useState("");
-  const spaceObjData = useSelector(state=> state.spaceDataObj);
+  }, [])
+  const [rocketName, setRocketName] = useState("");
+  const spaceObjData = useSelector(state => state.spaceDataObj);
   const [searchData, updateSearchData] = useState([]);
   const [launchStatusValue, setLaunchStatusValue] = useState();
-  const [isChecked, setIsChecked] = useState(false)
+  const [isChecked, setIsChecked] = useState(false);
+  const [islastYearChecked, setIslastYearChecked] = useState(false);
   const dispatch = useDispatch();
-  useEffect(()=>{
+  const constVariable = {
+    launchStatus: "Launch Status",
+    lastYear: "Last Year",
+    clearFilter:"Clear Filter",
+    isUpcoming: "Is Upcoming",
+  };
+
+  const cardsConstVar = {
+    missionName: "Mission Name",
+    flightNumber: "Flight Number",
+    details: "Details",
+    rocketName: "Rocket Name",
+    launchStatus: "Launch Status",
+  };
+  
+  useEffect(() => {
     updateSearchData(spaceObjData)
-  },[spaceObjData])
+  }, [spaceObjData])
 
   /* searchRocketName function for Searching by rocket name*/
-  function searchRocketName(event){
-    event.preventDefault();
-    setrocketName(event.target.value);
-    if(event.target.value) {
-      const rocketResults = spaceObjData.filter(sam => event.target.value === sam.rocket.rocket_name);
+  function searchRocketName(event) {
+    const abc = searchData.length>0 ? searchData : spaceObjData;
+    // event.preventDefault();
+    setRocketName(event.target.value);
+    if (event.target.value) {
+      const rocketResults = abc.filter(sam => event.target.value === sam.rocket.rocket_name);
       updateSearchData(rocketResults);
     } else {
       updateSearchData(spaceObjData);
     }
   }
-/* Filter data on using onFailure function by failure status*/
+  /* Filter data on using onFailure function by failure status*/
   function onFailure() {
-    const onFailureFilter = searchData.filter(x=> x.launch_success == false)
+    const abc1 = searchData.length>0? searchData : spaceObjData;
+    const onFailureFilter = abc1.filter(x => x.launch_success === false)
     updateSearchData(onFailureFilter);
   }
-/* Filter data on using onSuccess function by success status*/
+  /* Filter data on using onSuccess function by success status*/
   function onSuccess() {
-    const onSuccessFilter = searchData.filter(x=> x.launch_success == true)
+    const abc2 =  searchData.length>0 ? searchData : spaceObjData;
+    const onSuccessFilter = abc2.filter(x => x.launch_success === true)
     updateSearchData(onSuccessFilter);
   }
   /* onClear function to clear all filters */
   function onClear() {
     updateSearchData(spaceObjData);
     setLaunchStatusValue("");
-    setrocketName("");
-    setIsChecked(false)
+    setRocketName("");
+    setIsChecked(false);
+    setIslastYearChecked(false);
   }
   /* select success or failure status by using LaunchStatus function */
   function LaunchStatus(e) {
     e.preventDefault();
     setLaunchStatusValue(e.target.value);
-    if(e.target.value=="success") {
-      onSuccess()
-    } else if(e.target.value=="failure"){
-      onFailure()
+    if (e.target.value === "success") {
+      onSuccess();
+    } else if (e.target.value === "failure") {
+      onFailure();
     }
   }
 
   /* isUpcoming function used to filter data based on upcoming status  */
   const isUpcoming = () => {
-    var onSuccessFilter = [];
-    if(!isChecked) {
-      onSuccessFilter = spaceObjData.filter(x=> x.upcoming == true);
-      console.log(onSuccessFilter)
-      updateSearchData(onSuccessFilter);
+    var isUpcomingList = [];
+    if (!isChecked) {
+      isUpcomingList = spaceObjData.filter(x => x.upcoming === true);
+      updateSearchData(isUpcomingList);
     } else {
       updateSearchData(spaceObjData);
     }
     setIsChecked(!isChecked)
   }
-  return (
-    <div className="App">
-      <div class="heard-elements">
-      <div class="input-field col s12 m-r-7">
-      <input type="text" value={rocketName} onChange={searchRocketName} placeholder="Search Rocket Name" class="input-element"></input>
-        <label class="m-l-5 m-r-2">Launch Status</label>
-        <select onChange={e => LaunchStatus(e)} value={launchStatusValue} class="input-element">
-          <option value="" disabled selected>Choose Status</option>
-          <option value="success">Success</option>
-          <option value="failure">Failure</option>
-        </select>
-        <label>
-        <label class="m-l-5 m-r-1">Is Upcoming</label>
-        <input type="checkbox" id="checkbox" class="check-element"  checked={isChecked} onChange={isUpcoming} />
-      </label>
+
+  /* lastYear function used to filter data based on lastYear data  */
+  const lastYear = () => {
+    const currentYear = new Date();
+    var lastYearList = [];
+    if (!islastYearChecked) {
+      lastYearList = spaceObjData.filter(x => x.launch_year === (currentYear.getFullYear()-1));
+      updateSearchData(lastYearList);
+    } else {
+      updateSearchData(spaceObjData);
+    }
+    setIslastYearChecked(!islastYearChecked)
+  }
+
+
+  return ( <div className = "App" >
+    <div className = "heard-elements" >
+      <div className = "input-field col s12 m-r-7" >
+        <input type = "text" value = {rocketName} onChange = { searchRocketName } placeholder = "Search Rocket Name" className = "input-element" />
+        <label className = "m-l-5 m-r-2" > {constVariable.launchStatus}
+          <select onChange = { LaunchStatus } value = { launchStatusValue } className = "input-element m-l-2">
+            <option value = "Choose Status"> Choose Status </option>
+            <option value = "success" > Success </option> 
+            <option value = "failure" > Failure </option> 
+          </select > 
+        </label>
+        <label className = "m-l-5 m-r-1" > {constVariable.isUpcoming}
+          <input type = "checkbox"
+            id = "checkbox"
+            className = "check-element"
+            checked = { isChecked }
+            onChange = { isUpcoming }
+          />
+        </label >
+        <label className = "m-l-5 m-r-1" > {constVariable.lastYear}
+          <input type = "checkbox"
+            id = "checkbox"
+            className = "check-element"
+            checked = { islastYearChecked }
+            onChange = { lastYear }
+          />
+        </label >
       </div>
-        <button onClick={onClear}>Clear</button>
-      </div>
-      <div class="cards-list">
-        {searchData.length>0 && searchData.map(obj => (
-        <div className='to-cards' key={obj.mission_name}>
-          <div><b>Mission Name: </b>{obj.mission_name}</div>
-          <div><b>Flight Number: </b>{obj.flight_number}</div>
-          <div><b>Details: </b>{obj.details || 'NA'}</div>
+      <button onClick = { onClear } > {constVariable.clearFilter}</button>
+    </div> 
+    <div className = "cards-list" > 
+      {searchData.length > 0 && searchData.map(spaceDataResultObj => (
+        <div className = 'to-cards'
+          key = { spaceDataResultObj.mission_name } >
+          <div > < b > {cardsConstVar.missionName}: </b>{spaceDataResultObj.mission_name || "NA"}</div >
+          <div > < b > {cardsConstVar.flightNumber} </b>{spaceDataResultObj.flight_number || "NA"}</div >
+          <div > < b > {cardsConstVar.details}: </b>{spaceDataResultObj.details || "NA"}</div >
+          <div > < b > {cardsConstVar.rocketName}: </b>{spaceDataResultObj.rocket.rocket_name || "NA"}</div >
+          <div > < b > {cardsConstVar.launchStatus}: </b>{spaceDataResultObj.launch_success && spaceDataResultObj.launch_success.toString() || "NA"}</div >
         </div>
-        ))
-      }
-      {searchData.length <1 && <p>No Data Found</p>}
-      </div>
-    </div>
+      ))}
+      {searchData.length < 1 && < div className="p-a-5"> No Data Found </div>} 
+    </div > 
+  </div>
   );
 }
 

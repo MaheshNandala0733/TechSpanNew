@@ -44,6 +44,8 @@
 .check-element {
   height: 20px;
   width: 20px;
+  position: relative;
+  top: 4px;
 } 
 button {
     background-color: #1b3017; /* Green */
@@ -58,7 +60,6 @@ button {
 .heard-elements {
   display: flex;
   align-items: center;
-  justify-content: center;
   background-color: gainsboro;
   padding: 20px;
 }
@@ -67,7 +68,7 @@ button {
   padding: 0px;
 }
 .to-cards {
-  height: 200px;
+  height: 100px;
   width: 300px;
   padding: 12px;
   margin: 16px 20px;
@@ -105,4 +106,10 @@ background-color: #9ee9eb;
 
 .m-l-5 {
   margin-left: 20px;
+}
+.m-l-2{
+  margin-left: 8px;
+}
+.p-a-5 {
+  padding: 20px;
 }
