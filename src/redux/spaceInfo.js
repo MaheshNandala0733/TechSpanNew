@@ -1,12 +1,10 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-export const getInfo = createAsyncThunk('space/spaceInfo',
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+export const getInfo = createAsyncThunk("space/spaceInfo",
   async (args, {rejectWithValues})=> {
     try {
-      const {data} = await axios.get(`https://api.spacexdata.com/v3/launches`);
+      const {data} = await axios.get("https://api.spacexdata.com/v3/launches");
       return data
-      // console.log(data, "dataaaaaaaaaa")
-      // .slice(0, 5);
     } catch(error) {
       rejectWithValues(error)
     }
@@ -14,7 +12,7 @@ export const getInfo = createAsyncThunk('space/spaceInfo',
 );
 
 const spaceInfo= createSlice({
-  name: 'space',
+  name: "space",
   initialState: {
     spaceDataObj: [],
     loading: false,
@@ -36,7 +34,7 @@ const spaceInfo= createSlice({
       state.loading = false;
       state.isSuccess =false;
     }
-}
+  }
 });
 export const { getSpaceData } = spaceInfo.actions
 export default spaceInfo;
